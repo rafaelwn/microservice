@@ -1,0 +1,29 @@
+version: '3'
+services:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - my-networks      
+  node:
+    restart: always
+    build: .
+    ports:
+      - 8080:4000
+    volumes:
+      - ./:/code
+    depends_on:
+      - mongo      
+    networks:
+      - my-networks      
+volumes:
+  mongodb:
+networks:
+  my-networks:
+    driver: bridge  
