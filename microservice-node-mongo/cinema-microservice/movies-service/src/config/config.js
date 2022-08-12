@@ -8,12 +8,10 @@
 
 const dbSettings = {
   db: process.env.DB || 'movies',
-  user: process.env.DB_USER || 'glaucia',
-  pass: process.env.DB_PASS || 'teste123456',
+  user: process.env.DB_USER || 'admin',
+  pass: process.env.DB_PASS || 'password',
   repl: process.env.DB_REPLS || 'rs1',
-  servers: (process.env.DB_SERVERS) ? process.env.DB_SERVERS.split(' ') : [
-    'mongo:27017'
-  ],
+  servers: (process.env.DB_SERVERS) ? process.env.DB_SERVERS.split(' ') : [ 'mongo:27017' ],
   dbParameters: () => ({
     w: 'majority',
     wtimeout: 10000,

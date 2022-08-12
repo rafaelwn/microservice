@@ -11,21 +11,18 @@
 const server = require('./server/server')
 const repository = require('./repository/repository')
 const config = require('./config/config')
-//const uri  = `mongodb://${config.dbSettings.user}:${config.dbSettings.pass}@${config.dbSettings.servers[0]}/${config.dbSettings.db}?retryWrites=true&w=majority`;
-const uri  = `mongodb://admin:password@${config.dbSettings.servers[0]}/?retryWrites=true&w=majority`;
+const mongoClient = require('mongodb').MongoClient
 
-console.log("uri ====>", uri);
+const uri  = `mongodb://${config.dbSettings.user}:${config.dbSettings.pass}@${config.dbSettings.servers[0]}/?retryWrites=true&w=majority`
 
-var MongoClient = require('mongodb').MongoClient;
-
-MongoClient.connect(uri, function(err, db) {
+mongoClient.connect(uri, function(err, db) {
 
   if (err) throw err;  
 
-  var dbo = db.db("movies");
+  var dbo = db.db(config.dbSettings.db);
 
   let rep = repository.connect(dbo)
-    .then(repo => {
+  .then(repo => {
       console.log('Aplicação conectada ao repositório. Iniciando o serviço!')
       rep = repo
       return server.start({
@@ -33,13 +30,13 @@ MongoClient.connect(uri, function(err, db) {
         ssl: config.serverSettings.ssl,
         repo
       })
-  })
-  .then(app => {
-    console.log(`Aplicação conectada com sucesso. Executando na porta: ${config.serverSettings.port}.`)
-    app.on('close', () => {
-      rep.disconnect()
     })
-  })
+    .then(app => {
+      console.log(`Aplicação conectada com sucesso. Executando na porta: ${config.serverSettings.port}.`)
+      app.on('close', () => {
+        rep.disconnect()
+      })
+    })
 
 });
 
